@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraFit - Screen, Calorie & Hydration Hub</title>
+    <title>HealthTracker - Screen, Calorie & Hydration Hub</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,11 +31,11 @@
                 <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
-                <span>AuraFit</span>
+                <span>HealthTracker</span>
             </div>
 
             <nav class="nav-links">
-                <button class="nav-btn active" data-tab="dashboard" id="btn-dashboard">
+                <button class="nav-btn active" data-tab="dashboard">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="9" rx="1" />
                         <rect x="14" y="3" width="7" height="5" rx="1" />
@@ -45,7 +45,7 @@
                     <span>Dashboard</span>
                 </button>
 
-                <button class="nav-btn" data-tab="screentime" id="btn-screentime">
+                <button class="nav-btn" data-tab="screentime">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
                         <line x1="12" y1="18" x2="12.01" y2="18" />
@@ -53,7 +53,7 @@
                     <span>Screen Time</span>
                 </button>
 
-                <button class="nav-btn" data-tab="calories" id="btn-calories">
+                <button class="nav-btn" data-tab="calories">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2c1.978 0 3.864.57 5.485 1.57a10 10 0 1 1-10.97 0A9.969 9.969 0 0 1 12 2zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
                         <path d="M12 8v4l3 3" />
@@ -61,11 +61,18 @@
                     <span>Calories</span>
                 </button>
 
-                <button class="nav-btn" data-tab="water" id="btn-water">
+                <button class="nav-btn" data-tab="water">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
                     </svg>
                     <span>Water Drank</span>
+                </button>
+
+                <button class="nav-btn reset-nav-btn" id="reset-stats-btn" title="Reset logged stats">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                    </svg>
+                    <span>Reset Stats</span>
                 </button>
             </nav>
 
@@ -78,7 +85,7 @@
                             <polyline points="21 15 16 10 5 21"/>
                         </svg>
                     </button>
-                    <button class="footer-tool-btn" id="sidebar-color-btn" title="Switch Sidebar Theme Color">
+                    <button class="footer-tool-btn" id="sidebar-color-btn" title="Change Sidebar Color">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <path d="M12 2a7 7 0 0 0 0 14 7 7 0 0 0 0-14z"/>
@@ -98,6 +105,7 @@
                     </button>
                 </div>
                 <input type="file" id="bg-upload-input" accept="image/*" style="display: none;">
+                <input type="color" id="sidebar-color-input" value="#0d0f19" style="display: none;">
             </div>
         </aside>
 
@@ -204,6 +212,7 @@
                             <select id="chart-timeframe" class="custom-select">
                                 <option value="7days">Last 7 Days</option>
                                 <option value="30days">Last 30 Days</option>
+                                <option value="all">All Time</option>
                             </select>
                         </div>
                     </div>
@@ -275,8 +284,8 @@
                                     <circle class="progress-ring-bar ring-screentime" stroke="#a855f7" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
                                 </svg>
                                 <div class="circle-inner">
-                                    <span class="circle-value" id="screentime-circle-val">0.0h</span>
-                                    <span class="circle-label" id="screentime-circle-pct">0% of limit</span>
+                                    <span class="circle-value">0.0h</span>
+                                    <span class="circle-label">0% of limit</span>
                                 </div>
                             </div>
                             <div class="circle-stats">
@@ -355,8 +364,8 @@
                                     <circle class="progress-ring-bar ring-calories" stroke="#f97316" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
                                 </svg>
                                 <div class="circle-inner">
-                                    <span class="circle-value" id="calories-circle-val">0</span>
-                                    <span class="circle-label" id="calories-circle-pct">0% of budget</span>
+                                    <span class="circle-value">0</span>
+                                    <span class="circle-label">0% of budget</span>
                                 </div>
                             </div>
                             <div class="circle-stats">
@@ -450,8 +459,8 @@
                                     <circle class="progress-ring-bar ring-water" stroke="#0ea5e9" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
                                 </svg>
                                 <div class="circle-inner">
-                                    <span class="circle-value" id="water-circle-val">0</span>
-                                    <span class="circle-label" id="water-circle-pct">0% of target</span>
+                                    <span class="circle-value">0</span>
+                                    <span class="circle-label">0% of target</span>
                                 </div>
                             </div>
                             <div class="circle-stats">
@@ -496,6 +505,23 @@
             </form>
         </div>
     </div>
+
+    <!-- Reset Stats Modal -->
+    <div id="reset-modal" class="modal-overlay" onclick="if(event.target === this) closeResetModal()">
+        <div class="modal-content glass-panel">
+            <button class="modal-close-btn" onclick="closeResetModal()" title="Close modal">&times;</button>
+            <h3>Reset Stats</h3>
+            <p class="subtitle">Choose how much history to clear</p>
+            <div class="reset-options">
+                <button class="reset-option-btn" data-range="today">Reset Today</button>
+                <button class="reset-option-btn" data-range="week">One Week</button>
+                <button class="reset-option-btn" data-range="month">One Month</button>
+                <button class="reset-option-btn danger" data-range="all">All Time</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="app.js"></script>
 </body>

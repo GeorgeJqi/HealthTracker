@@ -1,4 +1,4 @@
-// AuraFit - Core Logic & Data Controller
+// HealthTracker - Core Logic & Data Controller
 
 const STORAGE_KEY = 'aurafit_data';
 const GOALS = { screentime: 0.0, calories: 0, water: 0 };
@@ -32,34 +32,25 @@ function getPastDates(numDays) {
     return dates;
 }
 
+function getAllTimeDates() {
+    const today = getTodayDateString();
+    if (appData.logs.length === 0) return [today];
+    const earliest = appData.logs.reduce((min, log) => (log.date < min ? log.date : min), today);
+    const diffDays = Math.max(0, Math.round((new Date(`${today}T00:00:00`) - new Date(`${earliest}T00:00:00`)) / 86400000));
+    return getPastDates(diffDays + 1);
+}
+
 // --- Data Management & LocalStorage ---
 function loadData() {
     try {
         const rawData = localStorage.getItem(STORAGE_KEY);
-        if (rawData) {
-            appData = JSON.parse(rawData);
-            if (!appData.goals) {
-                appData.goals = { ...GOALS };
-            } else if (appData.goals.screentime === 6.0 && appData.goals.calories === 2200 && appData.goals.water === 2500) {
-                appData.goals = { ...GOALS };
-                saveToStorage();
-            }
-            if (appData.logs) {
-                const originalLen = appData.logs.length;
-                appData.logs = appData.logs.filter(log => !log.id.includes('_20'));
-                if (appData.logs.length !== originalLen) saveToStorage();
-            } else {
-                appData.logs = [];
-            }
-        } else {
-            appData.logs = [];
-            saveToStorage();
-        }
+        appData = rawData ? JSON.parse(rawData) : { goals: { ...GOALS }, logs: [] };
     } catch (e) {
         console.error('Failed to parse app data, resetting storage.', e);
         appData = { goals: { ...GOALS }, logs: [] };
-        saveToStorage();
     }
+    if (!appData.goals) appData.goals = { ...GOALS };
+    if (!Array.isArray(appData.logs)) appData.logs = [];
 }
 
 function saveToStorage() {
@@ -193,9 +184,6 @@ function renderCategoryTab(type) {
         const pill = document.querySelector('.limit-screentime');
         if (pill) pill.textContent = goal > 0 ? `Goal: max ${goal}h` : 'Goal: Not set';
 
-        const input = document.getElementById('goal-screentime-input');
-        if (input) input.value = goal || '';
-
         document.getElementById('screentime-session-count').textContent = todayLogs.length;
         const remaining = goal - totals.screentime;
         const remVal = document.getElementById('screentime-remaining');
@@ -219,9 +207,6 @@ function renderCategoryTab(type) {
         const pill = document.querySelector('.target-calories');
         if (pill) pill.textContent = goal > 0 ? `Target: ${goal.toLocaleString()} kcal` : 'Target: Not set';
 
-        const input = document.getElementById('goal-calories-input');
-        if (input) input.value = goal || '';
-
         document.getElementById('calories-total-val').textContent = `${totals.calories} kcal`;
         const remaining = goal - totals.calories;
         const remVal = document.getElementById('calories-remaining');
@@ -244,9 +229,6 @@ function renderCategoryTab(type) {
 
         const pill = document.querySelector('.target-water');
         if (pill) pill.textContent = goal > 0 ? `Target: ${goal.toLocaleString()} ml` : 'Target: Not set';
-
-        const input = document.getElementById('goal-water-input');
-        if (input) input.value = goal || '';
 
         document.getElementById('water-total-val').textContent = `${totals.water} ml`;
         const remaining = goal - totals.water;
@@ -348,9 +330,11 @@ function createGradient(ctx, colorStops) {
 
 function renderUnifiedChart() {
     const ctx = document.getElementById('unifiedChart').getContext('2d');
-    const daysCount = document.getElementById('chart-timeframe').value === '30days' ? 30 : 7;
+    const timeframe = document.getElementById('chart-timeframe').value;
 
-    const dates = getPastDates(daysCount);
+    const dates = timeframe === 'all'
+        ? getAllTimeDates()
+        : getPastDates(timeframe === '30days' ? 30 : 7);
     const aggregatedData = getAggregatedDataForDates(dates);
 
     const labels = dates.map(d => new Date(`${d}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
@@ -556,21 +540,28 @@ function setupEventListeners() {
         });
     }
 
+    const resetStatsBtn = document.getElementById('reset-stats-btn');
+    if (resetStatsBtn) resetStatsBtn.addEventListener('click', openResetModal);
+
+    document.querySelectorAll('.reset-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => resetStats(btn.getAttribute('data-range')));
+    });
+
     setupFooterToolbarControls();
 }
 
 // --- Custom Background & Customization Handlers ---
 let isBgBlurred = false;
-let currentSidebarThemeIdx = 0;
 
-const SIDEBAR_THEMES = [
-    { name: 'Default Dark Navy', bg: '#0d0f19', border: 'rgba(255, 255, 255, 0.08)' },
-    { name: 'Deep Violet', bg: '#140924', border: 'rgba(168, 85, 247, 0.25)' },
-    { name: 'Midnight Emerald', bg: '#061814', border: 'rgba(16, 185, 129, 0.25)' },
-    { name: 'Dark Crimson', bg: '#1a0910', border: 'rgba(244, 63, 94, 0.25)' },
-    { name: 'Pitch Black', bg: '#000000', border: 'rgba(255, 255, 255, 0.15)' },
-    { name: 'Ocean Blue', bg: '#081220', border: 'rgba(14, 165, 233, 0.25)' }
-];
+const DEFAULT_SIDEBAR_COLOR = '#0d0f19';
+
+function hexToRgba(hex, alpha) {
+    const normalized = hex.replace('#', '');
+    const r = parseInt(normalized.substring(0, 2), 16);
+    const g = parseInt(normalized.substring(2, 4), 16);
+    const b = parseInt(normalized.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 function applyCustomBackground(bgDataUrl) {
     const overlay = document.getElementById('custom-bg-overlay');
@@ -649,24 +640,19 @@ function processAndSaveBgImage(file) {
     reader.readAsDataURL(file);
 }
 
-function applySidebarTheme(idx) {
-    currentSidebarThemeIdx = idx % SIDEBAR_THEMES.length;
-    const theme = SIDEBAR_THEMES[currentSidebarThemeIdx];
+function applySidebarColor(hexColor) {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
-        sidebar.style.backgroundColor = theme.bg;
-        sidebar.style.borderColor = theme.border;
+        sidebar.style.backgroundColor = hexColor;
+        sidebar.style.borderColor = hexToRgba(hexColor, 0.4);
     }
     const colorBtn = document.getElementById('sidebar-color-btn');
     if (colorBtn) {
-        colorBtn.title = `Sidebar Theme: ${theme.name} (Click to switch)`;
+        colorBtn.title = `Sidebar Color: ${hexColor} (Click to change)`;
     }
-}
-
-function cycleSidebarTheme() {
-    const nextIdx = (currentSidebarThemeIdx + 1) % SIDEBAR_THEMES.length;
-    applySidebarTheme(nextIdx);
-    localStorage.setItem('aurafit_sidebar_theme', nextIdx);
+    const colorInput = document.getElementById('sidebar-color-input');
+    if (colorInput) colorInput.value = hexColor;
+    localStorage.setItem('aurafit_sidebar_color', hexColor);
 }
 
 function applyBgBlur(blurred) {
@@ -716,7 +702,15 @@ function setupFooterToolbarControls() {
     }
 
     if (sidebarColorBtn) {
-        sidebarColorBtn.addEventListener('click', cycleSidebarTheme);
+        const sidebarColorInput = document.getElementById('sidebar-color-input');
+        sidebarColorBtn.addEventListener('click', () => {
+            if (sidebarColorInput) sidebarColorInput.click();
+        });
+        if (sidebarColorInput) {
+            sidebarColorInput.addEventListener('input', () => {
+                applySidebarColor(sidebarColorInput.value);
+            });
+        }
     }
 
     if (bgBlurBtn) {
@@ -727,8 +721,12 @@ function setupFooterToolbarControls() {
     const savedBg = localStorage.getItem('aurafit_custom_bg');
     if (savedBg) applyCustomBackground(savedBg);
 
-    const savedThemeIdx = parseInt(localStorage.getItem('aurafit_sidebar_theme')) || 0;
-    applySidebarTheme(savedThemeIdx);
+    const savedSidebarColor = localStorage.getItem('aurafit_sidebar_color');
+    if (savedSidebarColor && /^#[0-9a-fA-F]{6}$/.test(savedSidebarColor)) {
+        applySidebarColor(savedSidebarColor);
+    } else {
+        applySidebarColor(DEFAULT_SIDEBAR_COLOR);
+    }
 
     const savedBlur = localStorage.getItem('aurafit_bg_blur') === 'true';
     applyBgBlur(savedBlur);
@@ -766,6 +764,50 @@ function closeGoalModal() {
 
 window.openGoalModal = openGoalModal;
 window.closeGoalModal = closeGoalModal;
+
+// --- Reset Stats ---
+function openResetModal() {
+    document.getElementById('reset-modal').classList.add('visible');
+}
+
+function closeResetModal() {
+    document.getElementById('reset-modal').classList.remove('visible');
+}
+
+function resetStats(range) {
+    const today = getTodayDateString();
+
+    if (range === 'all') {
+        appData.logs = [];
+    } else if (range === 'today') {
+        appData.logs = appData.logs.filter(log => log.date !== today);
+    } else {
+        const now = new Date();
+        const cutoff = new Date(now);
+        cutoff.setDate(now.getDate() - (range === 'week' ? 7 : 30));
+        const cutoffTs = cutoff.getTime();
+        appData.logs = appData.logs.filter(log => new Date(log.timestamp).getTime() >= cutoffTs);
+    }
+
+    saveToStorage();
+    closeResetModal();
+    switchTab('dashboard');
+    showToast('Stats reset successfully');
+}
+
+window.closeResetModal = closeResetModal;
+
+// --- Toast Notification ---
+let toastTimer = null;
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 3000);
+}
 
 function logWater(amount, notes) {
     addLog('water', amount, '', notes);

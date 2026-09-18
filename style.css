@@ -1,4 +1,4 @@
-/* AuraFit Stylesheet */
+/* HealthTracker Stylesheet */
 
 /* --- Design Tokens & Variables --- */
 :root {
@@ -260,6 +260,16 @@ body {
     border-radius: 0 4px 4px 0;
     background-color: var(--color-screentime-light);
     box-shadow: 0 0 8px var(--color-screentime-light);
+}
+
+.nav-btn.reset-nav-btn {
+    margin-top: auto;
+    color: var(--color-danger);
+}
+
+.nav-btn.reset-nav-btn:hover {
+    color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.08);
 }
 
 #btn-dashboard.active::before {
@@ -1167,6 +1177,10 @@ body {
         text-align: center;
         gap: 1.5rem;
     }
+
+    .toast {
+        bottom: 6rem;
+    }
 }
 
 /* --- Gear Settings Button --- */
@@ -1289,4 +1303,70 @@ body {
     filter: brightness(1.15);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
+}
+
+.reset-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.reset-option-btn {
+    width: 100%;
+    padding: 0.9rem 1.25rem;
+    border-radius: var(--border-radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: var(--transition-smooth);
+}
+
+.reset-option-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+}
+
+.reset-option-btn.danger {
+    color: var(--color-danger);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.reset-option-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* --- Toast Notification --- */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(13, 15, 25, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    color: var(--text-primary);
+    padding: 0.85rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    z-index: 100000;
+}
+
+.toast.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }

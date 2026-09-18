@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthTracker - Screen, Calorie & Hydration Hub</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Background overlay & ambient glow elements -->
+    <div class="custom-bg-overlay" id="custom-bg-overlay"></div>
+    <div class="glow-bg">
+        <div class="blob blob-purple"></div>
+        <div class="blob blob-orange"></div>
+        <div class="blob blob-blue"></div>
+    </div>
+    <div class="bg-blur-backdrop" id="bg-blur-backdrop"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation (Desktop) / Bottom Nav (Mobile) -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+                <span>HealthTracker</span>
+            </div>
+
+            <nav class="nav-links">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="9" rx="1" />
+                        <rect x="14" y="3" width="7" height="5" rx="1" />
+                        <rect x="14" y="12" width="7" height="9" rx="1" />
+                        <rect x="3" y="16" width="7" height="5" rx="1" />
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+
+                <button class="nav-btn" data-tab="screentime">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                        <line x1="12" y1="18" x2="12.01" y2="18" />
+                    </svg>
+                    <span>Screen Time</span>
+                </button>
+
+                <button class="nav-btn" data-tab="calories">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2c1.978 0 3.864.57 5.485 1.57a10 10 0 1 1-10.97 0A9.969 9.969 0 0 1 12 2zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+                        <path d="M12 8v4l3 3" />
+                    </svg>
+                    <span>Calories</span>
+                </button>
+
+                <button class="nav-btn" data-tab="water">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                    </svg>
+                    <span>Water Drank</span>
+                </button>
+
+                <button class="nav-btn reset-nav-btn" id="reset-stats-btn" title="Reset logged stats">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                    </svg>
+                    <span>Reset Stats</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-toolbar">
+                    <button class="footer-tool-btn" id="bg-picker-btn" title="Upload Custom Wallpaper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </button>
+                    <button class="footer-tool-btn" id="sidebar-color-btn" title="Change Sidebar Color">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 2a7 7 0 0 0 0 14 7 7 0 0 0 0-14z"/>
+                        </svg>
+                    </button>
+                    <button class="footer-tool-btn" id="bg-blur-btn" title="Toggle Background Blur">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                    <button class="footer-tool-btn danger" id="bg-reset-btn" title="Reset Default Wallpaper" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <input type="file" id="bg-upload-input" accept="image/*" style="display: none;">
+                <input type="color" id="sidebar-color-input" value="#0d0f19" style="display: none;">
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="content-header">
+                <div>
+                    <h1 id="page-title">Dashboard Overview</h1>
+                    <p id="page-subtitle" class="subtitle">Your vitals and digital habits at a glance</p>
+                </div>
+                <div class="date-badge">
+                    <span id="current-date">Tuesday, July 14</span>
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content active-content">
+                <div class="stats-grid">
+                    <!-- Screen Time Stat Card -->
+                    <div class="stat-card card-screentime" onclick="switchTab('screentime')">
+                        <div class="card-header">
+                            <span class="card-title">Screen Time</span>
+                            <div class="card-header-actions">
+                                <button class="gear-btn" onclick="event.stopPropagation(); openGoalModal('screentime')" title="Set Daily Limit">
+                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                </button>
+                                <div class="icon-badge badge-screentime">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                                        <line x1="12" y1="18" x2="12.01" y2="18" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="stat-value" id="dash-screentime-val">0.0 <span class="unit">hrs</span></h2>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="dash-screentime-progress" style="width: 0%"></div>
+                            </div>
+                            <span class="card-desc" id="dash-screentime-desc">Goal: 6.0 hrs max</span>
+                        </div>
+                    </div>
+
+                    <!-- Calories Stat Card -->
+                    <div class="stat-card card-calories" onclick="switchTab('calories')">
+                        <div class="card-header">
+                            <span class="card-title">Calories Eaten</span>
+                            <div class="card-header-actions">
+                                <button class="gear-btn" onclick="event.stopPropagation(); openGoalModal('calories')" title="Set Calorie Target">
+                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                </button>
+                                <div class="icon-badge badge-calories">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2c1.978 0 3.864.57 5.485 1.57a10 10 0 1 1-10.97 0A9.969 9.969 0 0 1 12 2zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+                                        <path d="M12 8v4l3 3" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="stat-value" id="dash-calories-val">0 <span class="unit">kcal</span></h2>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="dash-calories-progress" style="width: 0%"></div>
+                            </div>
+                            <span class="card-desc" id="dash-calories-desc">Goal: 2,200 kcal</span>
+                        </div>
+                    </div>
+
+                    <!-- Water Stat Card -->
+                    <div class="stat-card card-water" onclick="switchTab('water')">
+                        <div class="card-header">
+                            <span class="card-title">Water Hydration</span>
+                            <div class="card-header-actions">
+                                <button class="gear-btn" onclick="event.stopPropagation(); openGoalModal('water')" title="Set Hydration Target">
+                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                </button>
+                                <div class="icon-badge badge-water">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="stat-value" id="dash-water-val">0 <span class="unit">ml</span></h2>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="dash-water-progress" style="width: 0%"></div>
+                            </div>
+                            <span class="card-desc" id="dash-water-desc">Goal: 2,500 ml</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unified Graph Section -->
+                <div class="chart-section glass-panel">
+                    <div class="chart-header">
+                        <div class="chart-title-area">
+                            <h3>Analytics Dashboard</h3>
+                            <p class="subtitle">Unified trends for screentime, calories, and hydration</p>
+                        </div>
+                        <div class="chart-actions">
+                            <select id="chart-timeframe" class="custom-select">
+                                <option value="7days">Last 7 Days</option>
+                                <option value="30days">Last 30 Days</option>
+                                <option value="all">All Time</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="unifiedChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SCREEN TIME -->
+            <section id="tab-screentime" class="tab-content">
+                <div class="details-layout">
+                    <div class="glass-panel control-panel border-screentime">
+                        <h3>Log Activity</h3>
+                        <p class="subtitle">Track your digital usage and stay within limits</p>
+
+                        <form id="form-screentime" class="input-form">
+                            <div class="form-group-row">
+                                <div class="form-group">
+                                    <label for="screen-hours">Hours</label>
+                                    <input type="number" id="screen-hours" min="0" max="24" value="0" required class="custom-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="screen-minutes">Minutes</label>
+                                    <input type="number" id="screen-minutes" min="0" max="59" value="0" required class="custom-input">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="screen-category">Category</label>
+                                <select id="screen-category" class="custom-select w-full">
+                                    <option value="Social Media">Social Media</option>
+                                    <option value="Productivity / Work">Productivity & Work</option>
+                                    <option value="Gaming">Gaming</option>
+                                    <option value="Entertainment">Entertainment (Netflix/YouTube)</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="screen-notes">Notes (optional)</label>
+                                <input type="text" id="screen-notes" placeholder="e.g. Scrolled Instagram, code review" class="custom-input">
+                            </div>
+
+                            <button type="submit" class="submit-btn btn-screentime">
+                                <span>Log Screen Time</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-panel display-panel">
+                        <div class="display-header">
+                            <div>
+                                <h3>Daily Breakdown</h3>
+                                <p class="subtitle" id="screentime-date-label">Today's logs</p>
+                            </div>
+                            <div class="card-header-actions">
+                                <div class="goal-pill limit-screentime">Goal: max 6h</div>
+                                <button class="gear-btn" onclick="openGoalModal('screentime')" title="Set Daily Limit">
+                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="circular-progress-section">
+                            <div class="circle-wrap">
+                                <svg class="progress-ring-svg" width="160" height="160">
+                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent" r="70" cx="80" cy="80" />
+                                    <circle class="progress-ring-bar ring-screentime" stroke="#a855f7" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
+                                </svg>
+                                <div class="circle-inner">
+                                    <span class="circle-value">0.0h</span>
+                                    <span class="circle-label">0% of limit</span>
+                                </div>
+                            </div>
+                            <div class="circle-stats">
+                                <div class="c-stat">
+                                    <span class="c-stat-lbl">Logged Sessions</span>
+                                    <span class="c-stat-val" id="screentime-session-count">0</span>
+                                </div>
+                                <div class="c-stat">
+                                    <span class="c-stat-lbl">Remaining Allowance</span>
+                                    <span class="c-stat-val text-green" id="screentime-remaining">6.0 hrs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="logs-container">
+                            <h4>Recent Logs</h4>
+                            <div class="empty-state" id="screentime-empty">No screen time logged today yet.</div>
+                            <ul class="log-list" id="screentime-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: CALORIES -->
+            <section id="tab-calories" class="tab-content">
+                <div class="details-layout">
+                    <div class="glass-panel control-panel border-calories">
+                        <h3>Log Nutrition</h3>
+                        <p class="subtitle">Fuel your body and keep track of your intake</p>
+
+                        <form id="form-calories" class="input-form">
+                            <div class="form-group">
+                                <label for="calorie-amount">Calorie Amount (kcal)</label>
+                                <input type="number" id="calorie-amount" min="0" max="5000" value="0" placeholder="0" required class="custom-input">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="calorie-meal">Meal / Snack Type</label>
+                                <select id="calorie-meal" class="custom-select w-full">
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Dinner">Dinner</option>
+                                    <option value="Snack">Snack</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="calorie-food">Description</label>
+                                <input type="text" id="calorie-food" placeholder="e.g. Avocado Toast, Chicken Salad" required class="custom-input">
+                            </div>
+
+                            <button type="submit" class="submit-btn btn-calories">
+                                <span>Log Meal</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-panel display-panel">
+                        <div class="display-header">
+                            <div>
+                                <h3>Calorie Budget</h3>
+                                <p class="subtitle" id="calories-date-label">Today's logs</p>
+                            </div>
+                            <div class="card-header-actions">
+                                <div class="goal-pill target-calories">Target: 2,200 kcal</div>
+                                <button class="gear-btn" onclick="openGoalModal('calories')" title="Set Calorie Target">
+                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="circular-progress-section">
+                            <div class="circle-wrap">
+                                <svg class="progress-ring-svg" width="160" height="160">
+                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent" r="70" cx="80" cy="80" />
+                                    <circle class="progress-ring-bar ring-calories" stroke="#f97316" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
+                                </svg>
+                                <div class="circle-inner">
+                                    <span class="circle-value">0</span>
+                                    <span class="circle-label">0% of budget</span>
+                                </div>
+                            </div>
+                            <div class="circle-stats">
+                                <div class="c-stat">
+                                    <span class="c-stat-lbl">Calories Eaten</span>
+                                    <span class="c-stat-val" id="calories-total-val">0 kcal</span>
+                                </div>
+                                <div class="c-stat">
+                                    <span class="c-stat-lbl">Remaining Budget</span>
+                                    <span class="c-stat-val text-orange" id="calories-remaining">2,200 kcal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="logs-container">
+                            <h4>Meals Eaten Today</h4>
+                            <div class="empty-state" id="calories-empty">No meals logged today yet.</div>
+                            <ul class="log-list" id="calories-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: WATER DRANK -->
+            <section id="tab-water" class="tab-content">
+                <div class="details-layout">
+                    <div class="glass-panel control-panel border-water">
+                        <h3>Log Hydration</h3>
+                        <p class="subtitle">Keep track of your hydration intake and stay fit</p>
+
+                        <div class="quick-add-grid">
+                            <button class="quick-add-btn" data-amount="250">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                                </svg>
+                                <span>+250 ml</span>
+                            </button>
+                            <button class="quick-add-btn" data-amount="500">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                                </svg>
+                                <span>+500 ml</span>
+                            </button>
+                            <button class="quick-add-btn" data-amount="750">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                                </svg>
+                                <span>+750 ml</span>
+                            </button>
+                        </div>
+
+                        <div class="divider">
+                            <span>or Custom Amount</span>
+                        </div>
+
+                        <form id="form-water" class="input-form">
+                            <div class="form-group">
+                                <label for="water-amount">Water Amount (ml)</label>
+                                <input type="number" id="water-amount" min="0" max="3000" value="0" placeholder="0" required class="custom-input">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="water-notes">Notes (optional)</label>
+                                <input type="text" id="water-notes" placeholder="e.g. Glass of sparkling water" class="custom-input">
+                            </div>
+
+                            <button type="submit" class="submit-btn btn-water">
+                                <span>Log Water</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-panel display-panel">
+                        <div class="display-header">
+                            <div>
+                                <h3>Hydration Goal</h3>
+                                <p class="subtitle" id="water-date-label">Today's logs</p>
+                            </div>
+                            <div class="card-header-actions">
+                                <div class="goal-pill target-water">Target: 2,500 ml</div>
+                                <button class="gear-btn" onclick="openGoalModal('water')" title="Set Hydration Target">
+                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="circular-progress-section">
+                            <div class="circle-wrap">
+                                <svg class="progress-ring-svg" width="160" height="160">
+                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent" r="70" cx="80" cy="80" />
+                                    <circle class="progress-ring-bar ring-water" stroke="#0ea5e9" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
+                                </svg>
+                                <div class="circle-inner">
+                                    <span class="circle-value">0</span>
+                                    <span class="circle-label">0% of target</span>
+                                </div>
+                            </div>
+                            <div class="circle-stats">
+                                <div class="c-stat">
+                                    <span class="c-stat-lbl">Hydration Level</span>
+                                    <span class="c-stat-val" id="water-total-val">0 ml</span>
+                                </div>
+                                <div class="c-stat">
+                                    <span class="c-stat-lbl">Remaining Target</span>
+                                    <span class="c-stat-val text-blue" id="water-remaining">2,500 ml</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="logs-container">
+                            <h4>Intake Log Today</h4>
+                            <div class="empty-state" id="water-empty">No water intake logged today yet.</div>
+                            <ul class="log-list" id="water-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Goal Settings Modal -->
+    <div id="goal-modal" class="modal-overlay" onclick="if(event.target === this) closeGoalModal()">
+        <div class="modal-content glass-panel">
+            <button class="modal-close-btn" onclick="closeGoalModal()" title="Close modal">&times;</button>
+            <h3 id="modal-title">Adjust Goal</h3>
+            <p id="modal-subtitle" class="subtitle">Set your daily target</p>
+
+            <form id="form-modal-goal" class="input-form">
+                <input type="hidden" id="modal-category-type">
+                <div class="form-group">
+                    <label id="modal-input-label" for="modal-goal-input">New Goal</label>
+                    <input type="number" id="modal-goal-input" min="0" step="any" required class="custom-input">
+                </div>
+                <button type="submit" class="submit-btn">
+                    <span>Save Goal</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Stats Modal -->
+    <div id="reset-modal" class="modal-overlay" onclick="if(event.target === this) closeResetModal()">
+        <div class="modal-content glass-panel">
+            <button class="modal-close-btn" onclick="closeResetModal()" title="Close modal">&times;</button>
+            <h3>Reset Stats</h3>
+            <p class="subtitle">Choose how much history to clear</p>
+            <div class="reset-options">
+                <button class="reset-option-btn" data-range="today">Reset Today</button>
+                <button class="reset-option-btn" data-range="week">One Week</button>
+                <button class="reset-option-btn" data-range="month">One Month</button>
+                <button class="reset-option-btn danger" data-range="all">All Time</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

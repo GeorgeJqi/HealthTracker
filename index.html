@@ -521,6 +521,33 @@
         </div>
     </div>
 
+    <!-- Color Picker Modal -->
+    <div id="color-picker-modal" class="modal-overlay" onclick="if(event.target === this) closeColorPicker(false)">
+        <div class="modal-content glass-panel color-picker-panel">
+            <div class="color-picker-head">
+                <button type="button" class="picker-text-btn" onclick="closeColorPicker(false)">Cancel</button>
+                <h3>Choose a color</h3>
+                <button type="button" class="picker-select-btn" onclick="closeColorPicker(true)">Select</button>
+            </div>
+
+            <div class="color-wheel" id="color-wheel">
+                <div class="hue-ring" id="hue-ring" role="slider" aria-label="Hue" tabindex="0"></div>
+                <div class="sv-area" id="sv-area" role="slider" aria-label="Saturation and brightness" tabindex="0">
+                    <span class="cp-handle sv-handle" id="sv-handle"></span>
+                </div>
+                <span class="cp-handle hue-handle" id="hue-handle"></span>
+            </div>
+
+            <div class="picker-meta">
+                <span class="preview-swatch" id="picker-preview"></span>
+                <input type="text" id="picker-hex" class="custom-input" value="#0d0f19" maxlength="7" spellcheck="false" autocomplete="off" aria-label="Hex color value">
+            </div>
+
+            <p class="picker-label">Presets</p>
+            <div class="picker-presets" id="picker-presets"></div>
+        </div>
+    </div>
+
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="app.js"></script>

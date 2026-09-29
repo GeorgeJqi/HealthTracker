@@ -640,7 +640,7 @@ function processAndSaveBgImage(file) {
     reader.readAsDataURL(file);
 }
 
-function applySidebarColor(hexColor) {
+function applySidebarColor(hexColor, persist = true) {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
         sidebar.style.backgroundColor = hexColor;
@@ -652,7 +652,218 @@ function applySidebarColor(hexColor) {
     }
     const colorInput = document.getElementById('sidebar-color-input');
     if (colorInput) colorInput.value = hexColor;
-    localStorage.setItem('aurafit_sidebar_color', hexColor);
+    if (persist) localStorage.setItem('aurafit_sidebar_color', hexColor);
+}
+
+// --- Custom Color Picker (hue ring + saturation/brightness square) ---
+const COLOR_PRESETS = [
+    '#0d0f19', '#111827', '#1f2937', '#374151', '#6b7280', '#9ca3af', '#d1d5db', '#f9fafb',
+    '#ef4444', '#f97316', '#f59e0b', '#facc15', '#22c55e', '#14b8a6', '#0ea5e9',
+    '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899'
+];
+
+const pickerState = { h: 0, s: 0, v: 0, original: null, open: false };
+
+function normalizeHex(hex) {
+    if (typeof hex !== 'string') return null;
+    let h = hex.trim().replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(h)) return null;
+    return '#' + h.toLowerCase();
+}
+
+function rgbToHex(r, g, b) {
+    const toHex = n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function hexToRgb(hex) {
+    const h = normalizeHex(hex) || '#000000';
+    return {
+        r: parseInt(h.substring(1, 3), 16),
+        g: parseInt(h.substring(3, 5), 16),
+        b: parseInt(h.substring(5, 7), 16)
+    };
+}
+
+function rgbToHsv(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+    let h = 0;
+    if (d !== 0) {
+        if (max === r) h = ((g - b) / d) % 6;
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h *= 60;
+        if (h < 0) h += 360;
+    }
+    return { h, s: max === 0 ? 0 : d / max, v: max };
+}
+
+function hsvToRgb(h, s, v) {
+    h = ((h % 360) + 360) % 360;
+    const c = v * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = v - c;
+    let r = 0, g = 0, b = 0;
+    if (h < 60) { r = c; g = x; }
+    else if (h < 120) { r = x; g = c; }
+    else if (h < 180) { g = c; b = x; }
+    else if (h < 240) { g = x; b = c; }
+    else if (h < 300) { r = x; b = c; }
+    else { r = c; b = x; }
+    return { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
+}
+
+function pickerHex() {
+    return hsvHex(pickerState.h, pickerState.s, pickerState.v);
+}
+
+function hsvHex(h, s, v) {
+    const { r, g, b } = hsvToRgb(h, s, v);
+    return rgbToHex(r, g, b);
+}
+
+function setPickerColor(hex, live = true) {
+    const valid = normalizeHex(hex);
+    if (!valid) return false;
+    const { r, g, b } = hexToRgb(valid);
+    const { h, s, v } = rgbToHsv(r, g, b);
+    pickerState.h = h;
+    pickerState.s = s;
+    pickerState.v = v;
+    renderPicker(live);
+    return true;
+}
+
+function renderPicker(live = true) {
+    const wheel = document.getElementById('color-wheel');
+    const svArea = document.getElementById('sv-area');
+    const hueHandle = document.getElementById('hue-handle');
+    const svHandle = document.getElementById('sv-handle');
+    const preview = document.getElementById('picker-preview');
+    const hexInput = document.getElementById('picker-hex');
+    if (!wheel || !svArea || !hueHandle || !svHandle) return;
+
+    const rect = wheel.getBoundingClientRect();
+    const ringPx = parseFloat(getComputedStyle(wheel).getPropertyValue('--cp-ring')) || 26;
+    const centerR = rect.width / 2 - ringPx / 2;
+    const rad = (pickerState.h * Math.PI) / 180;
+    hueHandle.style.left = `${rect.width / 2 + centerR * Math.sin(rad)}px`;
+    hueHandle.style.top = `${rect.height / 2 - centerR * Math.cos(rad)}px`;
+
+    const svRect = svArea.getBoundingClientRect();
+    svHandle.style.left = `${pickerState.s * svRect.width}px`;
+    svHandle.style.top = `${(1 - pickerState.v) * svRect.height}px`;
+
+    svArea.style.backgroundColor = hsvHex(pickerState.h, 1, 1);
+
+    const hex = pickerHex();
+    if (preview) preview.style.backgroundColor = hex;
+    if (hexInput && document.activeElement !== hexInput) hexInput.value = hex.toUpperCase();
+
+    if (live && pickerState.open) applySidebarColor(hex, false);
+}
+
+function dragHue(e) {
+    const wheel = document.getElementById('color-wheel');
+    const rect = wheel.getBoundingClientRect();
+    const ringPx = parseFloat(getComputedStyle(wheel).getPropertyValue('--cp-ring')) || 26;
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    if (Math.hypot(dx, dy) < rect.width / 2 - ringPx) return;
+    if (dx === 0 && dy === 0) return;
+    let angle = (Math.atan2(dx, -dy) * 180) / Math.PI;
+    if (angle < 0) angle += 360;
+    pickerState.h = angle;
+    renderPicker();
+}
+
+function dragSv(e) {
+    const svArea = document.getElementById('sv-area');
+    const rect = svArea.getBoundingClientRect();
+    pickerState.s = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    pickerState.v = Math.min(1, Math.max(0, 1 - (e.clientY - rect.top) / rect.height));
+    renderPicker();
+}
+
+function bindPickerDrag(el, handler) {
+    el.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        const hexInput = document.getElementById('picker-hex');
+        if (hexInput) hexInput.blur();
+        el.setPointerCapture(e.pointerId);
+        handler(e);
+    });
+    el.addEventListener('pointermove', e => {
+        if (el.hasPointerCapture(e.pointerId)) handler(e);
+    });
+    ['pointerup', 'pointercancel'].forEach(evt =>
+        el.addEventListener(evt, e => {
+            if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+        })
+    );
+}
+
+function openColorPicker() {
+    const colorInput = document.getElementById('sidebar-color-input');
+    const current = (colorInput && normalizeHex(colorInput.value)) || DEFAULT_SIDEBAR_COLOR;
+    pickerState.original = current;
+    pickerState.open = true;
+    setPickerColor(current, false);
+    const modal = document.getElementById('color-picker-modal');
+    modal.classList.add('visible');
+    requestAnimationFrame(() => renderPicker(false));
+}
+
+function closeColorPicker(commit) {
+    const modal = document.getElementById('color-picker-modal');
+    if (!modal || !pickerState.open) return;
+    if (commit) {
+        applySidebarColor(pickerHex(), true);
+        showToast('Sidebar color updated');
+    } else {
+        applySidebarColor(pickerState.original, false);
+    }
+    pickerState.open = false;
+    modal.classList.remove('visible');
+}
+
+function setupColorPicker() {
+    const modal = document.getElementById('color-picker-modal');
+    if (!modal) return;
+
+    bindPickerDrag(document.getElementById('hue-ring'), dragHue);
+    bindPickerDrag(document.getElementById('sv-area'), dragSv);
+
+    const hexInput = document.getElementById('picker-hex');
+    if (hexInput) {
+        hexInput.addEventListener('input', () => setPickerColor(hexInput.value));
+        hexInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); closeColorPicker(true); }
+            if (e.key === 'Escape') closeColorPicker(false);
+        });
+    }
+
+    const presets = document.getElementById('picker-presets');
+    if (presets) {
+        COLOR_PRESETS.forEach(hex => {
+            const swatch = document.createElement('button');
+            swatch.type = 'button';
+            swatch.className = 'preset-swatch';
+            swatch.style.backgroundColor = hex;
+            swatch.title = hex.toUpperCase();
+            swatch.addEventListener('click', () => setPickerColor(hex));
+            presets.appendChild(swatch);
+        });
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && pickerState.open) closeColorPicker(false);
+    });
+
+    window.openColorPicker = openColorPicker;
+    window.closeColorPicker = closeColorPicker;
 }
 
 function applyBgBlur(blurred) {
@@ -678,6 +889,7 @@ function toggleBgBlur() {
 }
 
 function setupFooterToolbarControls() {
+    setupColorPicker();
     const bgPickerBtn = document.getElementById('bg-picker-btn');
     const bgUploadInput = document.getElementById('bg-upload-input');
     const bgResetBtn = document.getElementById('bg-reset-btn');
@@ -702,15 +914,7 @@ function setupFooterToolbarControls() {
     }
 
     if (sidebarColorBtn) {
-        const sidebarColorInput = document.getElementById('sidebar-color-input');
-        sidebarColorBtn.addEventListener('click', () => {
-            if (sidebarColorInput) sidebarColorInput.click();
-        });
-        if (sidebarColorInput) {
-            sidebarColorInput.addEventListener('input', () => {
-                applySidebarColor(sidebarColorInput.value);
-            });
-        }
+        sidebarColorBtn.addEventListener('click', openColorPicker);
     }
 
     if (bgBlurBtn) {

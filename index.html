@@ -15,6 +15,47 @@
 </head>
 
 <body>
+    <!-- Reusable icon definitions. Kept in one place so the repeated marks
+         (logo, gear, nav + badge glyphs) stay byte-identical everywhere. -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="svg-defs" aria-hidden="true" focusable="false">
+        <defs>
+            <symbol id="icon-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </symbol>
+            <symbol id="icon-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </symbol>
+            <symbol id="icon-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="9" rx="1" />
+                <rect x="14" y="3" width="7" height="5" rx="1" />
+                <rect x="14" y="12" width="7" height="9" rx="1" />
+                <rect x="3" y="16" width="7" height="5" rx="1" />
+            </symbol>
+            <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                <line x1="12" y1="18" x2="12.01" y2="18" />
+            </symbol>
+            <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2c1.978 0 3.864.57 5.485 1.57a10 10 0 1 1-10.97 0A9.969 9.969 0 0 1 12 2zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+                <path d="M12 8v4l3 3" />
+            </symbol>
+            <symbol id="icon-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+            </symbol>
+            <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+            </symbol>
+            <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </symbol>
+        </defs>
+    </svg>
+
     <!-- Background overlay & ambient glow elements -->
     <div class="custom-bg-overlay" id="custom-bg-overlay"></div>
     <div class="glow-bg">
@@ -28,49 +69,45 @@
         <!-- Sidebar Navigation (Desktop) / Bottom Nav (Mobile) -->
         <aside class="sidebar">
             <div class="sidebar-logo">
-                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                <svg class="logo-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <use href="#icon-logo" />
                 </svg>
                 <span>HealthTracker</span>
             </div>
 
-            <nav class="nav-links">
-                <button class="nav-btn active" data-tab="dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="9" rx="1" />
-                        <rect x="14" y="3" width="7" height="5" rx="1" />
-                        <rect x="14" y="12" width="7" height="9" rx="1" />
-                        <rect x="3" y="16" width="7" height="5" rx="1" />
+            <nav class="nav-links" aria-label="Sections">
+                <button class="nav-btn active" type="button" data-tab="dashboard">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                        <use href="#icon-grid" />
                     </svg>
                     <span>Dashboard</span>
                 </button>
 
-                <button class="nav-btn" data-tab="screentime">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-                        <line x1="12" y1="18" x2="12.01" y2="18" />
+                <button class="nav-btn" type="button" data-tab="screentime">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                        <use href="#icon-phone" />
                     </svg>
                     <span>Screen Time</span>
                 </button>
 
-                <button class="nav-btn" data-tab="calories">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2c1.978 0 3.864.57 5.485 1.57a10 10 0 1 1-10.97 0A9.969 9.969 0 0 1 12 2zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
-                        <path d="M12 8v4l3 3" />
+                <button class="nav-btn" type="button" data-tab="calories">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                        <use href="#icon-clock" />
                     </svg>
                     <span>Calories</span>
                 </button>
 
-                <button class="nav-btn" data-tab="water">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                <button class="nav-btn" type="button" data-tab="water">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                        <use href="#icon-drop" />
                     </svg>
                     <span>Water Drank</span>
                 </button>
 
-                <button class="nav-btn reset-nav-btn" id="reset-stats-btn" title="Reset logged stats">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <button class="nav-btn reset-nav-btn" type="button" id="reset-stats-btn" title="Reset logged stats">
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+                            fill="none" stroke="currentColor" stroke-width="2" />
                     </svg>
                     <span>Reset Stats</span>
                 </button>
@@ -78,34 +115,36 @@
 
             <div class="sidebar-footer">
                 <div class="sidebar-footer-toolbar">
-                    <button class="footer-tool-btn" id="bg-picker-btn" title="Upload Custom Wallpaper">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <polyline points="21 15 16 10 5 21"/>
+                    <button class="footer-tool-btn" type="button" id="bg-picker-btn" title="Upload Custom Wallpaper"
+                        aria-label="Upload custom wallpaper">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
                         </svg>
                     </button>
-                    <button class="footer-tool-btn" id="sidebar-color-btn" title="Change Sidebar Color">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 2a7 7 0 0 0 0 14 7 7 0 0 0 0-14z"/>
+                    <button class="footer-tool-btn" type="button" id="sidebar-color-btn" title="Change Sidebar Color"
+                        aria-label="Change sidebar color">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 2a7 7 0 0 0 0 14 7 7 0 0 0 0-14z" />
                         </svg>
                     </button>
-                    <button class="footer-tool-btn" id="bg-blur-btn" title="Toggle Background Blur">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
-                            <circle cx="12" cy="12" r="3"/>
+                    <button class="footer-tool-btn" type="button" id="bg-blur-btn" title="Toggle Background Blur"
+                        aria-label="Toggle background blur" aria-pressed="false">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                            <circle cx="12" cy="12" r="3" />
                         </svg>
                     </button>
-                    <button class="footer-tool-btn danger" id="bg-reset-btn" title="Reset Default Wallpaper" style="display: none;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
+                    <button class="footer-tool-btn danger is-hidden" type="button" id="bg-reset-btn"
+                        title="Reset Default Wallpaper" aria-label="Reset default wallpaper">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                            <use href="#icon-close" />
                         </svg>
                     </button>
                 </div>
-                <input type="file" id="bg-upload-input" accept="image/*" style="display: none;">
-                <input type="color" id="sidebar-color-input" value="#0d0f19" style="display: none;">
+                <input type="file" id="bg-upload-input" accept="image/*" class="visually-hidden" tabindex="-1">
             </div>
         </aside>
 
@@ -114,12 +153,30 @@
 
             <!-- Header -->
             <header class="content-header">
-                <div>
+                <div class="header-titles">
                     <h1 id="page-title">Dashboard Overview</h1>
                     <p id="page-subtitle" class="subtitle">Your vitals and digital habits at a glance</p>
                 </div>
-                <div class="date-badge">
-                    <span id="current-date">Tuesday, July 14</span>
+
+                <div class="header-tools">
+                    <div class="search-bar" role="search">
+                        <svg class="search-logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                            <use href="#icon-logo" />
+                        </svg>
+                        <input type="search" id="log-search" class="search-input"
+                            placeholder="Search logs, meals, categories" aria-label="Search logged entries"
+                            autocomplete="off" spellcheck="false" enterkeyhint="search">
+                        <button type="button" class="search-clear is-hidden" id="search-clear"
+                            aria-label="Clear search">
+                            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                <use href="#icon-close" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="date-badge">
+                        <span id="current-date">Tuesday, July 14</span>
+                    </div>
                 </div>
             </header>
 
@@ -127,17 +184,20 @@
             <section id="tab-dashboard" class="tab-content active-content">
                 <div class="stats-grid">
                     <!-- Screen Time Stat Card -->
-                    <div class="stat-card card-screentime" onclick="switchTab('screentime')">
+                    <div class="stat-card card-screentime" role="button" tabindex="0" data-goto="screentime"
+                        aria-label="View Screen Time details">
                         <div class="card-header">
                             <span class="card-title">Screen Time</span>
                             <div class="card-header-actions">
-                                <button class="gear-btn" onclick="event.stopPropagation(); openGoalModal('screentime')" title="Set Daily Limit">
-                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                <button class="gear-btn" type="button" data-goal="screentime" title="Set Daily Limit"
+                                    aria-label="Set daily screen time limit">
+                                    <svg class="gear-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-gear" />
+                                    </svg>
                                 </button>
                                 <div class="icon-badge badge-screentime">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-                                        <line x1="12" y1="18" x2="12.01" y2="18" />
+                                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-phone" />
                                     </svg>
                                 </div>
                             </div>
@@ -152,17 +212,20 @@
                     </div>
 
                     <!-- Calories Stat Card -->
-                    <div class="stat-card card-calories" onclick="switchTab('calories')">
+                    <div class="stat-card card-calories" role="button" tabindex="0" data-goto="calories"
+                        aria-label="View Calories details">
                         <div class="card-header">
                             <span class="card-title">Calories Eaten</span>
                             <div class="card-header-actions">
-                                <button class="gear-btn" onclick="event.stopPropagation(); openGoalModal('calories')" title="Set Calorie Target">
-                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                <button class="gear-btn" type="button" data-goal="calories" title="Set Calorie Target"
+                                    aria-label="Set calorie target">
+                                    <svg class="gear-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-gear" />
+                                    </svg>
                                 </button>
                                 <div class="icon-badge badge-calories">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 2c1.978 0 3.864.57 5.485 1.57a10 10 0 1 1-10.97 0A9.969 9.969 0 0 1 12 2zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
-                                        <path d="M12 8v4l3 3" />
+                                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-clock" />
                                     </svg>
                                 </div>
                             </div>
@@ -177,16 +240,20 @@
                     </div>
 
                     <!-- Water Stat Card -->
-                    <div class="stat-card card-water" onclick="switchTab('water')">
+                    <div class="stat-card card-water" role="button" tabindex="0" data-goto="water"
+                        aria-label="View Water Hydration details">
                         <div class="card-header">
                             <span class="card-title">Water Hydration</span>
                             <div class="card-header-actions">
-                                <button class="gear-btn" onclick="event.stopPropagation(); openGoalModal('water')" title="Set Hydration Target">
-                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                <button class="gear-btn" type="button" data-goal="water" title="Set Hydration Target"
+                                    aria-label="Set hydration target">
+                                    <svg class="gear-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-gear" />
+                                    </svg>
                                 </button>
                                 <div class="icon-badge badge-water">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-drop" />
                                     </svg>
                                 </div>
                             </div>
@@ -209,7 +276,7 @@
                             <p class="subtitle">Unified trends for screentime, calories, and hydration</p>
                         </div>
                         <div class="chart-actions">
-                            <select id="chart-timeframe" class="custom-select">
+                            <select id="chart-timeframe" class="custom-select" aria-label="Chart timeframe">
                                 <option value="7days">Last 7 Days</option>
                                 <option value="30days">Last 30 Days</option>
                                 <option value="all">All Time</option>
@@ -220,6 +287,20 @@
                         <canvas id="unifiedChart"></canvas>
                     </div>
                 </div>
+
+                <!-- Search Results (only visible while the search box has a query) -->
+                <section id="search-results" class="chart-section glass-panel is-hidden" aria-labelledby="search-results-title">
+                    <div class="chart-header">
+                        <div class="chart-title-area">
+                            <h3 id="search-results-title">Search results</h3>
+                            <p class="subtitle" id="search-results-summary" role="status" aria-live="polite"></p>
+                        </div>
+                        <div class="chart-actions">
+                            <button type="button" class="picker-text-btn" id="search-clear-all">Clear search</button>
+                        </div>
+                    </div>
+                    <ul class="log-list search-result-list" id="search-results-list"></ul>
+                </section>
             </section>
 
             <!-- TAB 2: SCREEN TIME -->
@@ -233,11 +314,13 @@
                             <div class="form-group-row">
                                 <div class="form-group">
                                     <label for="screen-hours">Hours</label>
-                                    <input type="number" id="screen-hours" min="0" max="24" value="0" required class="custom-input">
+                                    <input type="number" id="screen-hours" min="0" max="24" value="0" required
+                                        class="custom-input">
                                 </div>
                                 <div class="form-group">
                                     <label for="screen-minutes">Minutes</label>
-                                    <input type="number" id="screen-minutes" min="0" max="59" value="0" required class="custom-input">
+                                    <input type="number" id="screen-minutes" min="0" max="59" value="0" required
+                                        class="custom-input">
                                 </div>
                             </div>
 
@@ -245,7 +328,7 @@
                                 <label for="screen-category">Category</label>
                                 <select id="screen-category" class="custom-select w-full">
                                     <option value="Social Media">Social Media</option>
-                                    <option value="Productivity / Work">Productivity & Work</option>
+                                    <option value="Productivity / Work">Productivity &amp; Work</option>
                                     <option value="Gaming">Gaming</option>
                                     <option value="Entertainment">Entertainment (Netflix/YouTube)</option>
                                     <option value="Other">Other</option>
@@ -254,7 +337,8 @@
 
                             <div class="form-group">
                                 <label for="screen-notes">Notes (optional)</label>
-                                <input type="text" id="screen-notes" placeholder="e.g. Scrolled Instagram, code review" class="custom-input">
+                                <input type="text" id="screen-notes" placeholder="e.g. Scrolled Instagram, code review"
+                                    class="custom-input">
                             </div>
 
                             <button type="submit" class="submit-btn btn-screentime">
@@ -271,17 +355,24 @@
                             </div>
                             <div class="card-header-actions">
                                 <div class="goal-pill limit-screentime">Goal: max 6h</div>
-                                <button class="gear-btn" onclick="openGoalModal('screentime')" title="Set Daily Limit">
-                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                <button class="gear-btn" type="button" data-goal="screentime" title="Set Daily Limit"
+                                    aria-label="Set daily screen time limit">
+                                    <svg class="gear-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-gear" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
 
                         <div class="circular-progress-section">
                             <div class="circle-wrap">
-                                <svg class="progress-ring-svg" width="160" height="160">
-                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent" r="70" cx="80" cy="80" />
-                                    <circle class="progress-ring-bar ring-screentime" stroke="#a855f7" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
+                                <svg class="progress-ring-svg" width="160" height="160" aria-hidden="true"
+                                    focusable="false">
+                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent"
+                                        r="70" cx="80" cy="80" />
+                                    <circle class="progress-ring-bar ring-screentime" stroke="#a855f7" stroke-width="12"
+                                        stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70"
+                                        cx="80" cy="80" />
                                 </svg>
                                 <div class="circle-inner">
                                     <span class="circle-value">0.0h</span>
@@ -301,7 +392,7 @@
                         </div>
 
                         <div class="logs-container">
-                            <h4>Recent Logs</h4>
+                            <h4 id="screentime-logs-title" data-label="Recent Logs">Recent Logs</h4>
                             <div class="empty-state" id="screentime-empty">No screen time logged today yet.</div>
                             <ul class="log-list" id="screentime-list"></ul>
                         </div>
@@ -319,7 +410,8 @@
                         <form id="form-calories" class="input-form">
                             <div class="form-group">
                                 <label for="calorie-amount">Calorie Amount (kcal)</label>
-                                <input type="number" id="calorie-amount" min="0" max="5000" value="0" placeholder="0" required class="custom-input">
+                                <input type="number" id="calorie-amount" min="0" max="5000" value="0" placeholder="0"
+                                    required class="custom-input">
                             </div>
 
                             <div class="form-group">
@@ -334,7 +426,8 @@
 
                             <div class="form-group">
                                 <label for="calorie-food">Description</label>
-                                <input type="text" id="calorie-food" placeholder="e.g. Avocado Toast, Chicken Salad" required class="custom-input">
+                                <input type="text" id="calorie-food" placeholder="e.g. Avocado Toast, Chicken Salad" required
+                                    class="custom-input">
                             </div>
 
                             <button type="submit" class="submit-btn btn-calories">
@@ -351,17 +444,24 @@
                             </div>
                             <div class="card-header-actions">
                                 <div class="goal-pill target-calories">Target: 2,200 kcal</div>
-                                <button class="gear-btn" onclick="openGoalModal('calories')" title="Set Calorie Target">
-                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                <button class="gear-btn" type="button" data-goal="calories" title="Set Calorie Target"
+                                    aria-label="Set calorie target">
+                                    <svg class="gear-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-gear" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
 
                         <div class="circular-progress-section">
                             <div class="circle-wrap">
-                                <svg class="progress-ring-svg" width="160" height="160">
-                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent" r="70" cx="80" cy="80" />
-                                    <circle class="progress-ring-bar ring-calories" stroke="#f97316" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
+                                <svg class="progress-ring-svg" width="160" height="160" aria-hidden="true"
+                                    focusable="false">
+                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent"
+                                        r="70" cx="80" cy="80" />
+                                    <circle class="progress-ring-bar ring-calories" stroke="#f6e05c" stroke-width="12"
+                                        stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70"
+                                        cx="80" cy="80" />
                                 </svg>
                                 <div class="circle-inner">
                                     <span class="circle-value">0</span>
@@ -381,7 +481,7 @@
                         </div>
 
                         <div class="logs-container">
-                            <h4>Meals Eaten Today</h4>
+                            <h4 id="calories-logs-title" data-label="Meals Eaten Today">Meals Eaten Today</h4>
                             <div class="empty-state" id="calories-empty">No meals logged today yet.</div>
                             <ul class="log-list" id="calories-list"></ul>
                         </div>
@@ -397,21 +497,21 @@
                         <p class="subtitle">Keep track of your hydration intake and stay fit</p>
 
                         <div class="quick-add-grid">
-                            <button class="quick-add-btn" data-amount="250">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                            <button class="quick-add-btn" type="button" data-amount="250">
+                                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                    <use href="#icon-drop" />
                                 </svg>
                                 <span>+250 ml</span>
                             </button>
-                            <button class="quick-add-btn" data-amount="500">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                            <button class="quick-add-btn" type="button" data-amount="500">
+                                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                    <use href="#icon-drop" />
                                 </svg>
                                 <span>+500 ml</span>
                             </button>
-                            <button class="quick-add-btn" data-amount="750">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z" />
+                            <button class="quick-add-btn" type="button" data-amount="750">
+                                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                    <use href="#icon-drop" />
                                 </svg>
                                 <span>+750 ml</span>
                             </button>
@@ -424,12 +524,14 @@
                         <form id="form-water" class="input-form">
                             <div class="form-group">
                                 <label for="water-amount">Water Amount (ml)</label>
-                                <input type="number" id="water-amount" min="0" max="3000" value="0" placeholder="0" required class="custom-input">
+                                <input type="number" id="water-amount" min="0" max="3000" value="0" placeholder="0"
+                                    required class="custom-input">
                             </div>
 
                             <div class="form-group">
                                 <label for="water-notes">Notes (optional)</label>
-                                <input type="text" id="water-notes" placeholder="e.g. Glass of sparkling water" class="custom-input">
+                                <input type="text" id="water-notes" placeholder="e.g. Glass of sparkling water"
+                                    class="custom-input">
                             </div>
 
                             <button type="submit" class="submit-btn btn-water">
@@ -446,17 +548,24 @@
                             </div>
                             <div class="card-header-actions">
                                 <div class="goal-pill target-water">Target: 2,500 ml</div>
-                                <button class="gear-btn" onclick="openGoalModal('water')" title="Set Hydration Target">
-                                    <img src="images/gear.png" alt="Settings" class="gear-icon">
+                                <button class="gear-btn" type="button" data-goal="water" title="Set Hydration Target"
+                                    aria-label="Set hydration target">
+                                    <svg class="gear-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                        <use href="#icon-gear" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
 
                         <div class="circular-progress-section">
                             <div class="circle-wrap">
-                                <svg class="progress-ring-svg" width="160" height="160">
-                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent" r="70" cx="80" cy="80" />
-                                    <circle class="progress-ring-bar ring-water" stroke="#0ea5e9" stroke-width="12" stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70" cx="80" cy="80" />
+                                <svg class="progress-ring-svg" width="160" height="160" aria-hidden="true"
+                                    focusable="false">
+                                    <circle class="progress-ring-bg" stroke="#1d1e2e" stroke-width="12" fill="transparent"
+                                        r="70" cx="80" cy="80" />
+                                    <circle class="progress-ring-bar ring-water" stroke="#67e8f9" stroke-width="12"
+                                        stroke-dasharray="439.8" stroke-dashoffset="439.8" fill="transparent" r="70"
+                                        cx="80" cy="80" />
                                 </svg>
                                 <div class="circle-inner">
                                     <span class="circle-value">0</span>
@@ -476,7 +585,7 @@
                         </div>
 
                         <div class="logs-container">
-                            <h4>Intake Log Today</h4>
+                            <h4 id="water-logs-title" data-label="Intake Log Today">Intake Log Today</h4>
                             <div class="empty-state" id="water-empty">No water intake logged today yet.</div>
                             <ul class="log-list" id="water-list"></ul>
                         </div>
@@ -487,9 +596,9 @@
     </div>
 
     <!-- Goal Settings Modal -->
-    <div id="goal-modal" class="modal-overlay" onclick="if(event.target === this) closeGoalModal()">
+    <div id="goal-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content glass-panel">
-            <button class="modal-close-btn" onclick="closeGoalModal()" title="Close modal">&times;</button>
+            <button class="modal-close-btn" type="button" data-close-modal aria-label="Close modal">&times;</button>
             <h3 id="modal-title">Adjust Goal</h3>
             <p id="modal-subtitle" class="subtitle">Set your daily target</p>
 
@@ -507,44 +616,71 @@
     </div>
 
     <!-- Reset Stats Modal -->
-    <div id="reset-modal" class="modal-overlay" onclick="if(event.target === this) closeResetModal()">
+    <div id="reset-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
         <div class="modal-content glass-panel">
-            <button class="modal-close-btn" onclick="closeResetModal()" title="Close modal">&times;</button>
-            <h3>Reset Stats</h3>
+            <button class="modal-close-btn" type="button" data-close-modal aria-label="Close modal">&times;</button>
+            <h3 id="reset-modal-title">Reset Stats</h3>
             <p class="subtitle">Choose how much history to clear</p>
             <div class="reset-options">
-                <button class="reset-option-btn" data-range="today">Reset Today</button>
-                <button class="reset-option-btn" data-range="week">One Week</button>
-                <button class="reset-option-btn" data-range="month">One Month</button>
-                <button class="reset-option-btn danger" data-range="all">All Time</button>
+                <button class="reset-option-btn" type="button" data-range="today">Reset Today</button>
+                <button class="reset-option-btn" type="button" data-range="week">One Week</button>
+                <button class="reset-option-btn" type="button" data-range="month">One Month</button>
+                <button class="reset-option-btn danger" type="button" data-range="all">All Time</button>
             </div>
         </div>
     </div>
 
     <!-- Color Picker Modal -->
-    <div id="color-picker-modal" class="modal-overlay" onclick="if(event.target === this) closeColorPicker(false)">
+    <div id="color-picker-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="picker-title">
         <div class="modal-content glass-panel color-picker-panel">
-            <div class="color-picker-head">
-                <button type="button" class="picker-text-btn" onclick="closeColorPicker(false)">Cancel</button>
-                <h3>Choose a color</h3>
-                <button type="button" class="picker-select-btn" onclick="closeColorPicker(true)">Select</button>
-            </div>
-
-            <div class="color-wheel" id="color-wheel">
-                <div class="hue-ring" id="hue-ring" role="slider" aria-label="Hue" tabindex="0"></div>
-                <div class="sv-area" id="sv-area" role="slider" aria-label="Saturation and brightness" tabindex="0">
-                    <span class="cp-handle sv-handle" id="sv-handle"></span>
-                </div>
-                <span class="cp-handle hue-handle" id="hue-handle"></span>
+            <div class="picker-head">
+                <h3 id="picker-title">Sidebar color</h3>
+                <button class="modal-close-btn" type="button" data-close-picker aria-label="Close color picker">&times;</button>
             </div>
 
             <div class="picker-meta">
                 <span class="preview-swatch" id="picker-preview"></span>
-                <input type="text" id="picker-hex" class="custom-input" value="#0d0f19" maxlength="7" spellcheck="false" autocomplete="off" aria-label="Hex color value">
+                <div class="picker-fields">
+                    <div class="hex-field">
+                        <span class="hex-prefix" aria-hidden="true">#</span>
+                        <input type="text" id="picker-hex" class="hex-input" value="0D0F19" maxlength="6"
+                            spellcheck="false" autocomplete="off" inputmode="text" aria-label="Hex color value">
+                        <button type="button" class="hex-copy" id="picker-copy" title="Copy hex" aria-label="Copy hex value">
+                            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                <rect x="9" y="9" width="12" height="12" rx="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="contrast-note" id="picker-contrast"></p>
+                </div>
             </div>
 
-            <p class="picker-label">Presets</p>
-            <div class="picker-presets" id="picker-presets"></div>
+            <div class="color-wheel" id="color-wheel">
+                <div class="hue-ring" id="hue-ring" role="slider" aria-label="Hue"
+                    aria-valuemin="0" aria-valuemax="359" aria-valuenow="0" tabindex="0"></div>
+                <div class="sv-area" id="sv-area" role="slider" aria-label="Saturation and brightness"
+                    tabindex="0">
+                    <!-- Anchored to the square: JS translates it by s/v offsets from here. -->
+                    <span class="cp-handle sv-handle" id="sv-handle" aria-hidden="true"></span>
+                </div>
+                <span class="cp-handle hue-handle" id="hue-handle" aria-hidden="true"></span>
+            </div>
+
+            <div class="picker-section is-hidden" id="picker-recents-section">
+                <p class="picker-label">Recent</p>
+                <div class="picker-presets" id="picker-recents"></div>
+            </div>
+
+            <div class="picker-section">
+                <p class="picker-label">Presets</p>
+                <div class="picker-presets" id="picker-presets"></div>
+            </div>
+
+            <div class="picker-actions">
+                <button type="button" class="picker-text-btn" data-close-picker>Cancel</button>
+                <button type="button" class="picker-select-btn" id="picker-select">Select</button>
+            </div>
         </div>
     </div>
 

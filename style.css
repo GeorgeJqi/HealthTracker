@@ -10,22 +10,26 @@
     --text-secondary: #9ca3af;
     --text-muted: #6b7280;
 
-    /* Category Colors */
+    /* Category Colors - softer, less saturated */
     --color-screentime: #a855f7;
-    --color-screentime-glow: rgba(168, 85, 247, 0.15);
+    --screentime-rgb: 168, 85, 247;
+    --color-screentime-glow: rgba(168, 85, 247, 0.1);
     --color-screentime-light: #c084fc;
 
-    --color-calories: #f97316;
-    --color-calories-glow: rgba(249, 115, 22, 0.15);
-    --color-calories-light: #fb923c;
+    --color-calories: #f6e05c;
+    --calories-rgb: 246, 224, 92;
+    --color-calories-glow: rgba(246, 224, 92, 0.15);
+    --color-calories-light: #fcd34d;
 
-    --color-water: #0ea5e9;
-    --color-water-glow: rgba(14, 165, 233, 0.15);
-    --color-water-light: #38bdf8;
+    --color-water: #67e8f9;
+    --water-rgb: 103, 232, 249;
+    --color-water-glow: rgba(103, 232, 249, 0.15);
+    --color-water-light: #93c5fd;
 
     --color-success: #10b981;
     --color-warning: #f59e0b;
-    --color-danger: #ef4444;
+    --color-danger: #f87171;
+    --danger-rgb: 248, 113, 113;
 
     /* Layout Variables */
     --sidebar-width: 260px;
@@ -55,6 +59,30 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* Visibility utilities */
+.svg-defs {
+    display: none;
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+/* Kept in the DOM for the file dialog, removed from the visual layout. */
+input.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Keyboard focus is visible; pointer focus stays clean. */
+:focus-visible {
+    outline: 2px solid var(--color-screentime-light);
+    outline-offset: 2px;
+}
+
 /* Custom Background Overlay & Glows */
 .custom-bg-overlay {
     position: fixed;
@@ -73,10 +101,15 @@ body {
     opacity: 1;
 }
 
+/* Heavier blur: paired with the backdrop-filter below, the two compound so the
+   image reads as a soft colour wash instead of a recognisable photo. The scale
+   is bumped to hide the transparent edge bleed a wide blur would otherwise
+   pull in at the viewport corners, and brightness/saturate are pulled down so
+   the glass panels and text on top stay legible. */
 .custom-bg-overlay.blurred {
-    filter: blur(6px) brightness(0.92) !important;
-    -webkit-filter: blur(6px) brightness(0.92) !important;
-    transform: scale(1.02);
+    filter: blur(16px) brightness(0.82) saturate(1.1) !important;
+    -webkit-filter: blur(16px) brightness(0.82) saturate(1.1) !important;
+    transform: scale(1.04);
 }
 
 .glow-bg {
@@ -89,8 +122,8 @@ body {
 }
 
 .glow-bg.blurred {
-    filter: blur(8px) !important;
-    -webkit-filter: blur(8px) !important;
+    filter: blur(16px) !important;
+    -webkit-filter: blur(16px) !important;
 }
 
 .bg-blur-backdrop {
@@ -105,9 +138,9 @@ body {
 }
 
 .bg-blur-backdrop.active {
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    background-color: rgba(9, 10, 16, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(9, 10, 16, 0.28);
 }
 
 .blob {
@@ -193,6 +226,7 @@ body {
 .logo-icon {
     width: 32px;
     height: 32px;
+    flex-shrink: 0;
     color: var(--color-screentime-light);
     filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
 }
@@ -201,6 +235,7 @@ body {
     font-size: 1.4rem;
     font-weight: 800;
     letter-spacing: -0.5px;
+    white-space: nowrap;
     background: linear-gradient(135deg, #fff 30%, #a855f7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -235,6 +270,7 @@ body {
 .nav-btn svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
     transition: var(--transition-smooth);
 }
 
@@ -248,6 +284,10 @@ body {
     background: rgba(255, 255, 255, 0.07);
     box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-btn svg {
+    display: block;
 }
 
 .nav-btn.active::before {
@@ -269,7 +309,7 @@ body {
 
 .nav-btn.reset-nav-btn:hover {
     color: var(--color-danger);
-    background: rgba(239, 68, 68, 0.08);
+    background: rgba(var(--danger-rgb), 0.08);
 }
 
 #btn-dashboard.active::before {
@@ -340,6 +380,10 @@ body {
 .footer-tool-btn svg {
     width: 18px;
     height: 18px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
     color: var(--color-screentime-light);
 }
 
@@ -351,15 +395,15 @@ body {
 }
 
 .footer-tool-btn.active {
-    background: rgba(168, 85, 247, 0.2);
-    border-color: rgba(168, 85, 247, 0.4);
+    background: rgba(var(--screentime-rgb), 0.2);
+    border-color: rgba(var(--screentime-rgb), 0.4);
     color: #fff;
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+    box-shadow: 0 0 10px rgba(var(--screentime-rgb), 0.25);
 }
 
 .footer-tool-btn.danger {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.2);
+    background: rgba(var(--danger-rgb), 0.1);
+    border-color: rgba(var(--danger-rgb), 0.2);
     color: var(--color-danger);
 }
 
@@ -368,7 +412,7 @@ body {
 }
 
 .footer-tool-btn.danger:hover {
-    background: rgba(239, 68, 68, 0.25);
+    background: rgba(var(--danger-rgb), 0.25);
 }
 
 /* Main Content Wrapper */
@@ -385,7 +429,109 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
     margin-bottom: 2.5rem;
+}
+
+/* Holds the search field and date side by side; wraps as a unit. */
+.header-tools {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* --- Search Bar ---
+   The logo doubles as the field's leading mark and doubles as its magnifier
+   affordance, so the control reads as "search inside HealthTracker". */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+    width: 260px;
+    max-width: 100%;
+    padding: 0.55rem 0.75rem 0.55rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    backdrop-filter: blur(16px);
+    transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.search-bar:focus-within {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(192, 132, 252, 0.5);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.search-logo {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--color-screentime-light);
+    filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.45));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s ease;
+}
+
+/* Nudges toward the cursor on focus to signal the field is interactive. */
+.search-bar:focus-within .search-logo {
+    transform: scale(1.08);
+    color: #fff;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Hide the native WebKit clear affordance; the custom one is styled. */
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.search-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.search-clear svg {
+    width: 13px;
+    height: 13px;
+}
+
+.search-clear:hover {
+    background: rgba(248, 113, 113, 0.18);
+    color: var(--text-primary);
+}
+
+.chart-title-area {
+    min-width: 0;
 }
 
 .content-header h1 {
@@ -413,6 +559,7 @@ body {
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--text-primary);
+    white-space: nowrap;
     backdrop-filter: blur(10px);
 }
 
@@ -460,6 +607,12 @@ body {
     overflow: hidden;
 }
 
+/* Cards are divs, so give keyboard users the same affordance as the gear. */
+.stat-card:focus-visible {
+    outline: 2px solid var(--color-screentime-light);
+    outline-offset: 3px;
+}
+
 .stat-card::after {
     content: '';
     position: absolute;
@@ -479,17 +632,17 @@ body {
 
 .card-screentime:hover {
     box-shadow: 0 15px 35px var(--color-screentime-glow);
-    border-color: rgba(168, 85, 247, 0.4);
+    border-color: rgba(var(--screentime-rgb), 0.4);
 }
 
 .card-calories:hover {
     box-shadow: 0 15px 35px var(--color-calories-glow);
-    border-color: rgba(249, 115, 22, 0.4);
+    border-color: rgba(var(--calories-rgb), 0.4);
 }
 
 .card-water:hover {
     box-shadow: 0 15px 35px var(--color-water-glow);
-    border-color: rgba(14, 165, 233, 0.4);
+    border-color: rgba(var(--water-rgb), 0.4);
 }
 
 .card-header {
@@ -523,20 +676,21 @@ body {
 .icon-badge svg {
     width: 18px;
     height: 18px;
+    display: block;
 }
 
 .badge-screentime {
-    background: rgba(168, 85, 247, 0.12);
+    background: rgba(var(--screentime-rgb), 0.12);
     color: var(--color-screentime-light);
 }
 
 .badge-calories {
-    background: rgba(249, 115, 22, 0.12);
+    background: rgba(var(--calories-rgb), 0.12);
     color: var(--color-calories-light);
 }
 
 .badge-water {
-    background: rgba(14, 165, 233, 0.12);
+    background: rgba(var(--water-rgb), 0.12);
     color: var(--color-water-light);
 }
 
@@ -721,8 +875,8 @@ body {
 }
 
 .quick-add-btn {
-    background: rgba(14, 165, 233, 0.05);
-    border: 1px solid rgba(14, 165, 233, 0.2);
+    background: rgba(var(--water-rgb), 0.05);
+    border: 1px solid rgba(var(--water-rgb), 0.2);
     border-radius: var(--border-radius-md);
     padding: 1rem 0.5rem;
     color: var(--color-water-light);
@@ -740,12 +894,13 @@ body {
 .quick-add-btn svg {
     width: 20px;
     height: 20px;
+    display: block;
 }
 
 .quick-add-btn:hover {
-    background: rgba(14, 165, 233, 0.15);
+    background: rgba(var(--water-rgb), 0.15);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(14, 165, 233, 0.25);
+    box-shadow: 0 5px 15px rgba(var(--water-rgb), 0.25);
 }
 
 .divider {
@@ -764,12 +919,12 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.divider:not(:empty)::before {
-    margin-right: .75em;
+.divider::before {
+    margin-right: 0.75em;
 }
 
-.divider:not(:empty)::after {
-    margin-left: .75em;
+.divider::after {
+    margin-left: 0.75em;
 }
 
 /* Submit buttons */
@@ -803,7 +958,7 @@ body {
 }
 
 .btn-calories:hover {
-    box-shadow: 0 8px 25px rgba(249, 115, 22, 0.45);
+    box-shadow: 0 8px 25px rgba(var(--calories-rgb), 0.45);
     transform: translateY(-2px);
 }
 
@@ -812,7 +967,7 @@ body {
 }
 
 .btn-water:hover {
-    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.45);
+    box-shadow: 0 8px 25px rgba(var(--water-rgb), 0.45);
     transform: translateY(-2px);
 }
 
@@ -837,21 +992,21 @@ body {
 }
 
 .limit-screentime {
-    background: rgba(168, 85, 247, 0.1);
+    background: rgba(var(--screentime-rgb), 0.1);
     color: var(--color-screentime-light);
-    border: 1px solid rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(var(--screentime-rgb), 0.2);
 }
 
 .target-calories {
-    background: rgba(249, 115, 22, 0.1);
+    background: rgba(var(--calories-rgb), 0.1);
     color: var(--color-calories-light);
-    border: 1px solid rgba(249, 115, 22, 0.2);
+    border: 1px solid rgba(var(--calories-rgb), 0.2);
 }
 
 .target-water {
-    background: rgba(14, 165, 233, 0.1);
+    background: rgba(var(--water-rgb), 0.1);
     color: var(--color-water-light);
-    border: 1px solid rgba(14, 165, 233, 0.2);
+    border: 1px solid rgba(var(--water-rgb), 0.2);
 }
 
 /* Circular Progress Visualization */
@@ -1027,6 +1182,10 @@ body {
 .log-meta {
     font-size: 0.75rem;
     color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
 }
 
 .log-meta-tag {
@@ -1035,22 +1194,22 @@ body {
     border-radius: 4px;
     font-size: 0.7rem;
     font-weight: 700;
-    margin-right: 0.4rem;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .tag-screentime {
-    background: rgba(168, 85, 247, 0.15);
+    background: rgba(var(--screentime-rgb), 0.15);
     color: var(--color-screentime-light);
 }
 
 .tag-calories {
-    background: rgba(249, 115, 22, 0.15);
+    background: rgba(var(--calories-rgb), 0.15);
     color: var(--color-calories-light);
 }
 
 .tag-water {
-    background: rgba(14, 165, 233, 0.15);
+    background: rgba(var(--water-rgb), 0.15);
     color: var(--color-water-light);
 }
 
@@ -1082,11 +1241,60 @@ body {
 .delete-btn svg {
     width: 16px;
     height: 16px;
+    display: block;
+}
+
+/* --- Search Result Rows --- */
+.search-result-list {
+    max-height: 320px;
+}
+
+.search-hit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    color: inherit;
+    font-family: var(--font-primary);
+    text-align: left;
+    cursor: pointer;
+}
+
+.search-hit .log-info {
+    min-width: 0;
+}
+
+.search-hit .log-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-hit-arrow {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.search-hit:hover .search-hit-arrow,
+.search-hit:focus-visible .search-hit-arrow {
+    color: var(--color-screentime-light);
+    transform: translateX(3px);
+}
+
+.search-result-list .empty-state {
+    list-style: none;
 }
 
 .delete-btn:hover {
     color: var(--color-danger);
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(var(--danger-rgb), 0.1);
 }
 
 /* --- Responsive Adaptations --- */
@@ -1096,6 +1304,21 @@ body {
     .stats-grid,
     .details-layout {
         grid-template-columns: 1fr;
+    }
+
+    /* Header stacks: search becomes full width beneath the titles. */
+    .content-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-tools {
+        width: 100%;
+    }
+
+    .search-bar {
+        width: auto;
+        flex: 1;
     }
 }
 
@@ -1171,6 +1394,22 @@ body {
         font-size: 1.8rem;
     }
 
+    /* Search and date each take a full row on phones. */
+    .header-tools {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .search-bar {
+        width: 100%;
+        flex: none;
+    }
+
+    .date-badge {
+        text-align: center;
+    }
+
     .circular-progress-section {
         flex-direction: column;
         align-items: center;
@@ -1205,17 +1444,19 @@ body {
     transform: scale(1.1);
 }
 
-.gear-btn:hover .gear-icon {
-    animation: gear-spin 1.2s linear infinite;
-    opacity: 1;
-}
-
+/* Inline SVG now, so the icon inherits currentColor instead of being
+   recoloured with a filter. */
 .gear-icon {
     width: 20px;
     height: 20px;
+    display: block;
     opacity: 0.7;
     transition: opacity 0.3s ease;
-    filter: brightness(0) invert(1);
+}
+
+.gear-btn:hover .gear-icon {
+    animation: gear-spin 1.2s linear infinite;
+    opacity: 1;
 }
 
 @keyframes gear-spin {
@@ -1335,12 +1576,12 @@ body {
 
 .reset-option-btn.danger {
     color: var(--color-danger);
-    border-color: rgba(239, 68, 68, 0.3);
+    border-color: rgba(var(--danger-rgb), 0.3);
 }
 
 .reset-option-btn.danger:hover {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(var(--danger-rgb), 0.1);
+    border-color: rgba(var(--danger-rgb), 0.5);
 }
 
 /* --- Toast Notification --- */
@@ -1373,24 +1614,32 @@ body {
 
 /* --- Custom Color Picker (hue ring + SV square) --- */
 .color-picker-panel {
-    width: 360px;
+    --picker-field-bg: rgba(255, 255, 255, 0.04);
+    --picker-field-border: rgba(255, 255, 255, 0.1);
+    width: 364px;
     max-width: 92vw;
-    padding: 1.5rem 1.75rem 1.75rem;
+    padding: 1.5rem 1.6rem 1.4rem;
 }
 
-.color-picker-head {
+/* Title row with the close control docked in its corner. */
+.picker-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
-.color-picker-head h3 {
+.picker-head h3 {
     font-size: 1.05rem;
-    font-weight: 600;
-    white-space: nowrap;
-    margin-bottom: 0;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    margin: 0;
+}
+
+.picker-head .modal-close-btn {
+    position: static;
+    flex-shrink: 0;
 }
 
 .picker-text-btn {
@@ -1398,14 +1647,17 @@ body {
     border: none;
     color: var(--text-secondary);
     font-family: var(--font-primary);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    padding: 0.4rem 0.25rem;
-    transition: color 0.2s ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-smooth);
 }
 
 .picker-text-btn:hover {
     color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .picker-select-btn {
@@ -1415,8 +1667,8 @@ body {
     font-family: var(--font-primary);
     font-size: 0.9rem;
     font-weight: 600;
-    padding: 0.45rem 1.1rem;
-    border-radius: 10px;
+    padding: 0.55rem 1.4rem;
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
     transition: var(--transition-smooth);
 }
@@ -1424,19 +1676,131 @@ body {
 .picker-select-btn:hover {
     background: var(--color-screentime);
     border-color: transparent;
-    box-shadow: 0 6px 18px rgba(168, 85, 247, 0.35);
+    box-shadow: 0 6px 18px rgba(var(--screentime-rgb), 0.35);
     transform: translateY(-1px);
 }
 
+/* --- Current colour readout --- */
+.picker-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.75rem;
+    margin-bottom: 1.35rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--border-radius-md);
+}
+
+.preview-swatch {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: #0d0f19;
+}
+
+.picker-fields {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Monospace, left-aligned hex with a fixed '#' gutter so the value
+   never shifts as digits change. */
+.hex-field {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    background: var(--picker-field-bg);
+    border: 1px solid var(--picker-field-border);
+    border-radius: var(--border-radius-sm);
+    padding: 0.2rem 0.3rem 0.2rem 0.65rem;
+    transition: var(--transition-smooth);
+}
+
+.hex-field:focus-within {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(192, 132, 252, 0.5);
+    box-shadow: 0 0 0 3px rgba(var(--screentime-rgb), 0.14);
+}
+
+.hex-prefix {
+    color: var(--text-muted);
+    font-family: var(--font-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.hex-input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0.35rem 0;
+    color: var(--text-primary);
+    font-family: var(--font-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hex-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.hex-copy svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+.hex-copy:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+}
+
+/* WCAG readout for the sidebar text colour. */
+.contrast-note {
+    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--color-success);
+    letter-spacing: 0.01em;
+}
+
+.contrast-note.is-warn {
+    color: var(--color-warning);
+}
+
+/* --- Wheel --- */
 .color-wheel {
-    --cp-size: min(260px, 68vw);
+    --cp-size: min(248px, 66vw);
     --cp-ring: 26px;
     --cp-inner: calc((var(--cp-size) - var(--cp-ring) * 2) / 2);
     --cp-sv: calc(var(--cp-inner) * 1.4142 - 8px);
     position: relative;
     width: var(--cp-size);
     height: var(--cp-size);
-    margin: 0 auto 1.4rem;
+    margin: 0 auto 1.5rem;
     touch-action: none;
     user-select: none;
 }
@@ -1470,52 +1834,35 @@ body {
 
 .cp-handle {
     position: absolute;
+    left: 0;
+    top: 0;
     width: 16px;
     height: 16px;
     border-radius: 50%;
     border: 2.5px solid #ffffff;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.45);
-    transform: translate(-50%, -50%);
+    /* JS supplies translate(-50%,-50%) translate(x,y); it owns the transform. */
     pointer-events: none;
     z-index: 3;
+    will-change: transform;
 }
 
 .hue-handle {
     z-index: 4;
 }
 
-.picker-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.35rem;
-}
-
-.preview-swatch {
-    width: 46px;
-    height: 46px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
-    background-color: #0d0f19;
-}
-
-.picker-meta .custom-input {
-    flex: 1;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 600;
+/* --- Swatch groups --- */
+.picker-section {
+    margin-bottom: 1rem;
 }
 
 .picker-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.6rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.55rem;
 }
 
 .picker-presets {
@@ -1541,16 +1888,48 @@ body {
     z-index: 2;
 }
 
+/* Ring marks the swatch matching the current selection. */
+.preset-swatch[aria-pressed='true'] {
+    box-shadow: 0 0 0 2px var(--bg-dark), 0 0 0 4px var(--color-screentime-light);
+}
+
+/* --- Footer actions --- */
+.picker-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
 @media (max-width: 480px) {
     .color-picker-panel {
         padding: 1.25rem;
     }
 
-    .color-picker-head {
-        margin-bottom: 1.1rem;
+    .picker-head {
+        margin-bottom: 1rem;
+    }
+
+    .picker-meta {
+        gap: 0.65rem;
+        padding: 0.6rem;
+        margin-bottom: 1.15rem;
+    }
+
+    .preview-swatch {
+        width: 40px;
+        height: 40px;
     }
 
     .color-wheel {
+        --cp-size: min(216px, 62vw);
         --cp-ring: 22px;
+    }
+
+    .picker-presets {
+        gap: 6px;
     }
 }

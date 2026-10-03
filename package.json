@@ -1,20 +1,26 @@
 {
-  "name": "my-app",
+  "name": "healthtracker",
   "version": "1.0.0",
+  "description": "Track screen time, calories and hydration in one place.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder"
   },
+  "license": "MIT",
   "devDependencies": {
     "electron": "^28.0.0",
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.yourname.myapp",
+    "appId": "com.healthtracker.app",
+    "files": [
+      "index.html",
+      "style.css",
+      "app.js"
+    ],
     "win": {
-      "target": ["nsis"],
-      "icon": "app-icon.ico"
+      "target": ["nsis"]
     }
   }
 }
